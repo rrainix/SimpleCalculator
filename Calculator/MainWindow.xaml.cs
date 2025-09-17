@@ -91,7 +91,7 @@ namespace Calculator
 
         private void BtnCalculate_OnClick(object sender, RoutedEventArgs e)
         {
-            Display.Text = DataTable.Compute(Display.Text, null).ToString(); // Note: Using the compute method for evaluating the result
+            Display.Text = DataTable.Compute(Display.Text, null).ToString(); // Warning: this function may not be 100% DOS safe
         }
 
         private void BtnClear_OnClick(object sender, RoutedEventArgs e)
