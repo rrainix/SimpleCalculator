@@ -10,3 +10,4 @@ A simple Calculator Windows desktop app made in about 1 hour using WPF and C#.
 - 2 + 5 * 2 = 12
 - 5 * (10 + 5) = 75
 - 20 + 100 / 2 * 4^2 = 820
+- 5 + (-2) - (-12) = 15
