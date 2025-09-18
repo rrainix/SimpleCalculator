@@ -1,5 +1,5 @@
 # Simple WPF Calculator
-A simple Calculator Windows desktop app made in about more than 1 hour using WPF and C#.
+A simple calculator windows desktop application made in about more than 1 hour using WPF and C#.
 
 ## Calculation Examples
 - 2 + 5 * 2 = 12
