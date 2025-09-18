@@ -91,7 +91,25 @@ namespace Calculator
 
         private void BtnCalculate_OnClick(object sender, RoutedEventArgs e)
         {
-            Display.Text = DataTable.Compute(Display.Text, null).ToString(); // Warning: this function may not be 100% DOS safe
+            Display.Text = TryCompute(Display.Text);
+        }
+
+        private string TryCompute(string calculation)
+        {
+            string compute = "Error";
+
+            if (calculation.Length == 0 || calculation.Length > 500) return compute;
+
+            try
+            {
+                compute = DataTable.Compute(calculation, null)?.ToString() ?? throw new Exception("Compute failed."); // Warning: this function may not be 100% DOS safe
+            }
+            catch(Exception)
+            {
+                return compute;
+            }
+
+            return compute;
         }
 
         private void BtnClear_OnClick(object sender, RoutedEventArgs e)
@@ -132,7 +150,7 @@ namespace Calculator
         #endregion
 
         #region Number Button Events
-        private void BtnZero_OnClick( object sender, RoutedEventArgs e)
+        private void BtnZero_OnClick(object sender, RoutedEventArgs e)
         {
             AddDisplayText(0);
         }
