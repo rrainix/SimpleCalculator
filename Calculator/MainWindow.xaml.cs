@@ -27,6 +27,7 @@ namespace Calculator
             SavePath = System.IO.Path.Combine(FileManager.AppDataPath, "SimpleCalculator", "Meta.txt");
 
             Display.Text = FileManager.LoadString(SavePath);
+            Display.TextChanged += Display_TextChanged;
             RegisterButtonEvents();
             this.Closing += MainWindow_OnClosing;
         }
@@ -35,6 +36,12 @@ namespace Calculator
         {
             UnRegisterButtonEvents();
             FileManager.SaveString(SavePath, Display.Text);
+        }
+
+        private void Display_TextChanged(object sender, RoutedEventArgs e)
+        {
+            const string allowedChars = "0123456789 +-/%^";
+            Display.Text = new string(Display.Text.Where(c => allowedChars.Contains(c)).ToArray());
         }
 
         private void RegisterButtonEvents()
@@ -101,7 +108,6 @@ namespace Calculator
             string compute = "Error";
 
             if (calculation.Length == 0 || calculation.Length > 500) return compute;
-
 
             try
             {
