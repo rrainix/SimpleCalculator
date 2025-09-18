@@ -86,6 +86,8 @@ namespace Calculator
 
         private void AddDisplayText<T>(T obj) // Note: Generic function for adding the numbers and operators to the display text
         {
+            if (Display.Text == "Error" || Display.Text == "0") Display.Text = string.Empty;
+
             Display.Text += obj?.ToString() ?? "";
         }
 
@@ -100,16 +102,50 @@ namespace Calculator
 
             if (calculation.Length == 0 || calculation.Length > 500) return compute;
 
+
             try
             {
+                calculation = Precalculate(calculation);
                 compute = DataTable.Compute(calculation, null)?.ToString() ?? throw new Exception("Compute failed."); // Warning: this function may not be 100% DOS safe
             }
-            catch(Exception)
+            catch (Exception ex)
             {
+#if DEBUG
+                MessageBox.Show(ex.Message + "\nSource location:" + ex.StackTrace);
+#endif
                 return compute;
             }
 
             return compute;
+        }
+
+        private string Precalculate(string calculation) // Note: Simple prototype function for precalculating certain operations
+        {
+            string[] splits = calculation.Split(' ');
+
+            foreach (string s in splits)
+            {
+                if (s.Contains('^'))
+                {
+                    string[] valueSplits = s.Split('^');
+
+                    if (valueSplits.Length == 2)
+                    {
+                        string newValue = Math.Pow(double.Parse(valueSplits[0]), double.Parse(valueSplits[1])).ToString();
+                        calculation = calculation.Replace(s, newValue);
+                    }
+                }
+                else if (s.ToLower().Contains("cos"))
+                {
+
+                }
+                else if (s.ToLower().Contains("sin"))
+                {
+
+                }
+            }
+
+            return calculation;
         }
 
         private void BtnClear_OnClick(object sender, RoutedEventArgs e)
