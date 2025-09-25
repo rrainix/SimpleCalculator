@@ -9,5 +9,5 @@ A simple calculator windows desktop application made in about more than 1 hour u
 
 ## Screenshot
 <p align="center">
-  <img src="Docs/preview1.png" width="45%" alt="Gameplay Screenshot 1">
+  <img src="Docs/preview1.png" width="25%" algin="left" alt="Screenshot 1">
 </p>
