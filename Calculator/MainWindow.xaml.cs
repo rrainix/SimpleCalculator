@@ -27,6 +27,7 @@ namespace Calculator
             SavePath = System.IO.Path.Combine(FileManager.AppDataPath, "SimpleCalculator", "Meta.txt");
 
             Display.Text = FileManager.LoadString(SavePath);
+            Display.TextChanged += Display_TextChanged;
             RegisterButtonEvents();
             this.Closing += MainWindow_OnClosing;
         }
@@ -35,6 +36,12 @@ namespace Calculator
         {
             UnRegisterButtonEvents();
             FileManager.SaveString(SavePath, Display.Text);
+        }
+
+        private void Display_TextChanged(object sender, RoutedEventArgs e)
+        {
+            const string allowedChars = "0123456789 +-/%^";
+            Display.Text = new string(Display.Text.Where(c => allowedChars.Contains(c)).ToArray());
         }
 
         private void RegisterButtonEvents()
@@ -86,12 +93,65 @@ namespace Calculator
 
         private void AddDisplayText<T>(T obj) // Note: Generic function for adding the numbers and operators to the display text
         {
+            if (Display.Text == "Error" || Display.Text == "0") Display.Text = string.Empty;
+
             Display.Text += obj?.ToString() ?? "";
         }
 
         private void BtnCalculate_OnClick(object sender, RoutedEventArgs e)
         {
-            Display.Text = DataTable.Compute(Display.Text, null).ToString(); // Note: Using the compute method for evaluating the result
+            Display.Text = TryCompute(Display.Text);
+        }
+
+        private string TryCompute(string calculation)
+        {
+            string compute = "Error";
+
+            if (calculation.Length == 0 || calculation.Length > 500) return compute;
+
+            try
+            {
+                calculation = Precalculate(calculation);
+                compute = DataTable.Compute(calculation, null)?.ToString() ?? throw new Exception("Compute failed."); // Warning: this function may not be 100% DOS safe
+            }
+            catch (Exception ex)
+            {
+#if DEBUG
+                MessageBox.Show(ex.Message + "\nSource location:" + ex.StackTrace);
+#endif
+                return compute;
+            }
+
+            return compute;
+        }
+
+        private string Precalculate(string calculation) // Note: Simple prototype function for precalculating certain operations
+        {
+            string[] splits = calculation.Split(' ');
+
+            foreach (string s in splits)
+            {
+                if (s.Contains('^'))
+                {
+                    string[] valueSplits = s.Split('^');
+
+                    if (valueSplits.Length == 2)
+                    {
+                        string newValue = Math.Pow(double.Parse(valueSplits[0]), double.Parse(valueSplits[1])).ToString();
+                        calculation = calculation.Replace(s, newValue);
+                    }
+                }
+                else if (s.ToLower().Contains("cos"))
+                {
+
+                }
+                else if (s.ToLower().Contains("sin"))
+                {
+
+                }
+            }
+
+            return calculation;
         }
 
         private void BtnClear_OnClick(object sender, RoutedEventArgs e)
@@ -132,7 +192,7 @@ namespace Calculator
         #endregion
 
         #region Number Button Events
-        private void BtnZero_OnClick( object sender, RoutedEventArgs e)
+        private void BtnZero_OnClick(object sender, RoutedEventArgs e)
         {
             AddDisplayText(0);
         }
